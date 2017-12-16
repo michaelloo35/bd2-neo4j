@@ -5,7 +5,11 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        GraphDatabase.createDatabase();
+        Solution solution = new Solution();
+//        solution.clearNodes();
+        solution.databaseStatistics();
+//        solution.fillDatabase();
+        solution.viewSchema();
     }
 
 }
