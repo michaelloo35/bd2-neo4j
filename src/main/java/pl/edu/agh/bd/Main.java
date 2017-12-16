@@ -6,10 +6,15 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Solution solution = new Solution();
-//        solution.clearNodes();
+        resetDatabase(solution);
         solution.databaseStatistics();
-//        solution.fillDatabase();
+        solution.viewNodes();
         solution.viewSchema();
+    }
+
+    private static void resetDatabase(Solution solution) {
+        solution.deleteAllData();
+        solution.fillDatabase();
     }
 
 }
