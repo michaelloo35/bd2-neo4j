@@ -2,6 +2,8 @@ package pl.edu.agh.bd;
 
 import org.neo4j.graphdb.*;
 
+import java.util.List;
+
 public class Solution {
 
     private final GraphDatabase graphDatabase = GraphDatabase.createDatabase();
@@ -11,12 +13,21 @@ public class Solution {
         System.out.println(graphDatabase.runCypher("CALL db.relationshipTypes()"));
     }
 
-    public void runAllTests() {
-//        System.out.println(findActorByName("Emma Watson"));
-//        System.out.println(findMovieByTitleLike("Star Wars"));
-//        System.out.println(findRatedMoviesForUser("maheshksp"));
-//        System.out.println(findCommonMoviesForActors("Emma Watson", "Daniel Radcliffe"));
-//        System.out.println(findMovieRecommendationForUser("emileifrem"));
+    public String shortestPathBetweenNodesById(String id1, String id2, String maxDepth) {
+        return graphDatabase.runCypher(String.format("MATCH (x),(y), " +
+                "p = shortestPath((x)-[*..%s]-(y)) " +
+                "WHERE id(x) = %s AND id(y) = %s " +
+                "RETURN p", maxDepth, id1, id2));
+    }
+
+    public String getRelationshipsById(String nodeId) {
+        return graphDatabase.runCypher(String.format("MATCH (x)-[r]-(y) " +
+                "WHERE id(x) = %s " +
+                "RETURN x,r,y", nodeId));
+    }
+
+    public List<String> getNodesRelationships(String label, String key, String value) {
+        return graphDatabase.findNodesRelationships(label, key, value);
     }
 
     public void viewNodes() {
@@ -122,12 +133,12 @@ public class Solution {
             createCourseOfGroupRelationship(math, a5);
             createCourseOfGroupRelationship(programming, a1);
             createCourseOfGroupRelationship(programming, b3);
-            createCourseOfGroupRelationship(programming, a2);
+            createCourseOfGroupRelationship(englishLiterature, a2);
             createCourseOfGroupRelationship(programming, c5);
-            createCourseOfGroupRelationship(programming, c6);
+            createCourseOfGroupRelationship(physics, c6);
             createCourseOfGroupRelationship(programming, c7);
-            createCourseOfGroupRelationship(programming, c8);
-            createCourseOfGroupRelationship(programming, c9);
+            createCourseOfGroupRelationship(biology, c8);
+            createCourseOfGroupRelationship(biology, c9);
             createCourseOfGroupRelationship(programming, c10);
 
 

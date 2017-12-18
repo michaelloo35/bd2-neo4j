@@ -1,12 +1,14 @@
 package pl.edu.agh.bd;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
 
 public final class GraphDatabase {
 
@@ -19,9 +21,9 @@ public final class GraphDatabase {
 
     private GraphDatabase() {
         graphDatabaseService = new GraphDatabaseFactory()
-            .newEmbeddedDatabaseBuilder(new File(GRAPH_DIR_LOC))
-            .setConfig(GraphDatabaseSettings.allow_upgrade, "true")
-            .newGraphDatabase();
+                .newEmbeddedDatabaseBuilder(new File(GRAPH_DIR_LOC))
+                .setConfig(GraphDatabaseSettings.allow_upgrade, "true")
+                .newGraphDatabase();
         registerShutdownHook();
     }
 
@@ -44,6 +46,20 @@ public final class GraphDatabase {
             return result.resultAsString();
         }
     }
+
+    public List<String> findNodesRelationships(final String label, final String key, final Object value) {
+        try (Transaction transaction = graphDatabaseService.beginTx()) {
+            final ResourceIterator<Node> result = graphDatabaseService.findNodes(Label.label(label), key, value);
+            transaction.success();
+            return result
+                    .stream()
+                    .map(node -> node.getRelationships().spliterator())
+                    .flatMap(split -> StreamSupport.stream(split, false))
+                    .map(Object::toString)
+                    .collect(toList());
+        }
+    }
+
 
     public GraphDatabaseService getGraphDatabaseService() {
         return graphDatabaseService;
